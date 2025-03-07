@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .modal .form-label {
+            font-weight: bold;
+        }
+        .table-striped > tbody > tr:hover {
+            background-color: #f1f3f5;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">SmartCampus Admin Panel</a>
+            <div class="ms-auto">
+                <a href="/admin/manage-courses" class="btn btn-light me-3">Back to Courses</a>
+                <a href="/auth/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Course Details: {{ course.title }}</h2>
+
+        <!-- Faculty Assigned -->
+        <div class="mb-3">
+            <h4>Faculty: {{ course.faculty.username if course.faculty else 'None Assigned' }}</h4>
+        </div>
+
+        <!-- Enrolled Students -->
+        <div class="table-container">
+            <h4>Enrolled Students</h4>
+            <table class="table table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in enrolled_students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.username }}</td>
+                        <td>
+                            <form action="/admin/remove-student-from-course/{{ course.id }}/{{ student.id }}" method="post" style="display:inline;">
+                                <button class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">No students are currently enrolled in this course.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <!-- Add New Student -->
+        <div class="mt-5">
+            <h4>Assign New Student</h4>
+            <form action="/admin/add-student-to-course/{{ course.id }}" method="post">
+                <div class="mb-3">
+                    <label for="student_id" class="form-label">Select Student</label>
+                    <select class="form-select" id="student_id" name="student_id" required>
+                        <option value="" disabled selected>Select Student</option>
+                        {% for student in students %}
+                        <option value="{{ student.id }}">{{ student.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Student</button>
+            </form>
+        </div>
+
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            SmartCampus © 2024
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

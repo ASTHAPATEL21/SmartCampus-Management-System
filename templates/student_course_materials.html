@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Materials for {{ course.title }}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">SmartCampus</a>
+        <div class="ms-auto">
+          <a href="/student/courses" class="btn btn-light me-3"
+            >Back to Courses</a
+          >
+          <a href="/auth/logout" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">Materials for {{ course.title }}</h2>
+
+      <!-- Course Materials -->
+      <div class="table-container">
+        <h4>Available Materials</h4>
+        <table class="table table-striped">
+          <thead class="table-primary">
+            <tr>
+              <th>#</th>
+              <th>File</th>
+              <th>Caption</th>
+              <th>Uploaded At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for material in materials %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>
+                <a href="/{{ material.file_path }}" target="_blank">
+                  {% if material.file_path.endswith('.pdf') %}
+                  <i class="fas fa-file-pdf text-danger"></i> View PDF {% elif
+                  material.file_path.endswith('.ppt') %}
+                  <i class="fas fa-file-pdf text-danger"></i> View PPT {% elif
+                  material.file_path.endswith('.docx') %}
+                  <i class="fas fa-file-word text-primary"></i> View Document {%
+                  elif material.file_path.endswith('.jpg') or
+                  material.file_path.endswith('.jpeg') or
+                  material.file_path.endswith('.png') %}
+                  <i class="fas fa-image text-success"></i> View Image {% else
+                  %} <i class="fas fa-file text-secondary"></i> View File {%
+                  endif %}
+                </a>
+              </td>
+              <td>{{ material.caption }}</td>
+              <td>
+                <span
+                  class="time-elapsed"
+                  data-time="{{ material.uploaded_at }}"
+                  >{{ material.uploaded_at }}</span
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="4" class="text-center">
+                No materials uploaded yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+        SmartCampus © 2024
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+      // Convert uploaded_at to "time ago" format
+      document.querySelectorAll(".time-elapsed").forEach((element) => {
+        const uploadedTime = new Date(element.dataset.time);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - uploadedTime) / 1000);
+        let timeString;
+
+        if (diffInSeconds < 60) {
+          timeString = `${diffInSeconds} seconds ago`;
+        } else if (diffInSeconds < 3600) {
+          const minutes = Math.floor(diffInSeconds / 60);
+          timeString = `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+        } else if (diffInSeconds < 86400) {
+          const hours = Math.floor(diffInSeconds / 3600);
+          timeString = `${hours} hour${hours > 1 ? "s" : ""} ago`;
+        } else if (diffInSeconds < 604800) {
+          const days = Math.floor(diffInSeconds / 86400);
+          timeString = `${days} day${days > 1 ? "s" : ""} ago`;
+        } else if (diffInSeconds < 2592000) {
+          const weeks = Math.floor(diffInSeconds / 604800);
+          timeString = `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+        } else {
+          const months = Math.floor(diffInSeconds / 2592000);
+          timeString = `${months} month${months > 1 ? "s" : ""} ago`;
+        }
+
+        element.textContent = timeString;
+      });
+    </script>
+  </body>
+</html>

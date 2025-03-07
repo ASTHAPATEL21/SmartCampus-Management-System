@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Grades - {{ course.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">SmartCampus Faculty Panel</a>
+            <div class="ms-auto">
+                <a href="/faculty/panel" class="btn btn-light me-3">Back to Panel</a>
+                <a href="/auth/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Manage Grades for {{ course.title }}</h2>
+
+        <!-- Grades Form -->
+        <form action="/faculty/save-grades/{{ course.id }}" method="post">
+            <table class="table table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.student.id }}</td>
+                        <td>{{ grade.student.username }}</td>
+                        <td>
+                            <select name="grades[{{ grade.student.id }}]" class="form-select" required>
+                                <option value="" {% if not grade.grade %}selected{% endif %}>Select Grade</option>
+                                <option value="A" {% if grade.grade == "A" %}selected{% endif %}>A</option>
+                                <option value="B" {% if grade.grade == "B" %}selected{% endif %}>B</option>
+                                <option value="C" {% if grade.grade == "C" %}selected{% endif %}>C</option>
+                                <option value="D" {% if grade.grade == "D" %}selected{% endif %}>D</option>
+                                <option value="F" {% if grade.grade == "F" %}selected{% endif %}>F</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">No students enrolled yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary">Save Grades</button>
+            </div>
+        </form>
+
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            SmartCampus © 2024
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

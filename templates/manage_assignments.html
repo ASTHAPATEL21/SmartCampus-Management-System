@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Assignments - {{ course.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">SmartCampus Faculty Panel</a>
+            <div class="ms-auto">
+                <a href="/faculty/panel" class="btn btn-light me-3">Back to Panel</a>
+                <a href="/auth/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Manage Assignments for {{ course.title }}</h2>
+
+        <!-- Existing Assignments -->
+        <div class="table-container">
+            <h4>Existing Assignments</h4>
+            <table class="table table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Due Date</th>
+                        <th>File</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in assignments %}
+                    <tr>
+                        <td>{{ assignment.id }}</td>
+                        <td>{{ assignment.title }}</td>
+                        <td>{{ assignment.description }}</td>
+                        <td>{{ assignment.due_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if assignment.file_path %}
+                                {% if assignment.file_path.endswith('.pdf') %}
+                                <i class="fas fa-file-pdf text-danger"></i>
+                                {% elif assignment.file_path.endswith('.docx') %}
+                                <i class="fas fa-file-word text-primary"></i>
+                                {% elif assignment.file_path.endswith('.png') or assignment.file_path.endswith('.jpg') or assignment.file_path.endswith('.jpeg') %}
+                                <i class="fas fa-file-image text-success"></i>
+                                {% else %}
+                                <i class="fas fa-file"></i>
+                                {% endif %}
+                                <a href="/{{ assignment.file_path }}" target="_blank">View</a>
+                            {% else %}
+                                No File
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="/faculty/delete-assignment/{{ assignment.id }}" method="post" style="display:inline;">
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No assignments added yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Assignment -->
+        <div class="mt-5">
+            <h4>Add New Assignment</h4>
+            <form action="/faculty/add-assignment/{{ course.id }}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="due_date" class="form-label">Due Date</label>
+                    <input type="date" class="form-control" id="due_date" name="due_date" required>
+                </div>
+                <div class="mb-3">
+                    <label for="file" class="form-label">Upload File</label>
+                    <input type="file" class="form-control" id="file" name="file" accept=".pdf,.docx,.png,.jpg,.jpeg" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            SmartCampus © 2024
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
